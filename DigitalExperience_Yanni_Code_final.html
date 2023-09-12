@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+
+
+/* Adjust the welcome image */
+.welcome-container {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  align-items: center; /* Center vertically */
+  justify-content: center; /* Center horizontally */
+  overflow: hidden;
+}
+
+.welcome-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* New CSS styles for the welcome text */
+.welcome-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-size: 24px;
+  font-weight: bold;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  text-align: center; 
+}
+
+.background-video {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+}
+
+.background-video video {
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
+}
+
+.welcome-image {
+  display: none;
+}
+
+.welcome-image img {
+  max-width: 100%;
+  height: auto;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background-color: #474e5d;
+  font-family: Helvetica, sans-serif;
+}
+
+/* The actual timeline (the vertical ruler) */
+.timeline {
+  position: relative;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* The actual timeline (the vertical ruler) */
+ .timeline::after {
+  content: '';
+  position: absolute;
+  width: 6px;
+  background-color: white;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  margin-left: -3px;
+}
+
+/* Container around content */
+.container {
+  padding: 10px 40px;
+  position: relative;
+  background-color: inherit;
+  width: 50%;
+}
+
+/* The circles on the timeline */
+.container::after {
+  content: '';
+  position: absolute;
+  width: 25px;
+  height: 25px;
+  right: -17px;
+  background-color: white;
+  border: 4px solid #FF9F55;
+  top: 15px;
+  border-radius: 50%;
+  z-index: 1;
+}
+
+/* Place the container to the left */
+.left {
+  left: 0;
+}
+
+/* Place the container to the right */
+.right {
+  left: 50%;
+}
+
+/* Add arrows to the left container (pointing right) */
+.left::before {
+  content: " ";
+  height: 0;
+  position: absolute;
+  top: 22px;
+  width: 0;
+  z-index: 1;
+  right: 30px;
+  border: medium solid white;
+  border-width: 10px 0 10px 10px;
+  border-color: transparent transparent transparent white;
+}
+
+/* Add arrows to the right container (pointing left) */
+.right::before {
+  content: " ";
+  height: 0;
+  position: absolute;
+  top: 22px;
+  width: 0;
+  z-index: 1;
+  left: 30px;
+  border: medium solid white;
+  border-width: 10px 10px 10px 0;
+  border-color: transparent white transparent transparent;
+}
+
+/* Fix the circle for containers on the right side */
+.right::after {
+  left: -16px;
+}
+
+/* The actual content */
+.content {
+  padding: 20px 30px;
+  background-color: white;
+  position: relative;
+  border-radius: 6px;
+}
+
+/* Media queries - Responsive timeline on screens less than 600px wide */
+@media screen and (max-width: 600px) {
+  /* Place the timelime to the left */
+  .timeline::after {
+  left: 31px;
+  }
+  
+  /* Full-width containers */
+  .container {
+  width: 100%;
+  padding-left: 70px;
+  padding-right: 25px;
+  }
+  
+  /* Make sure that all arrows are pointing leftwards */
+  .container::before {
+  left: 60px;
+  border: medium solid white;
+  border-width: 10px 10px 10px 0;
+  border-color: transparent white transparent transparent;
+  }
+
+  /* Make sure all circles are at the same spot */
+  .left::after, .right::after {
+  left: 15px;
+  }
+  
+  /* Make all right containers behave like the left ones */
+  .right {
+  left: 0%;
+  }
+}
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 2; /* Sit on top */
+  padding-top: 100px; /* Location of the box */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+    
+
+/* Modal Content */
+.modal-content {
+  background-color: #fefefe;
+  margin: auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+}
+
+/* The Close Button */
+.close {
+  color: #aaaaaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+}
+.inactive{
+    
+  }
+</style>
+</head>
+<body>
+
+
+<div class="timeline">
+
+  <div class="welcome-container" id="welcome-container">
+    <img src="https://img.zeit.de/wissen/geschichte/2015-08/nofretete-bueste-berlin/wide__1300x731" alt="Welcome Image">
+    <div class="welcome-text">
+      <h1>Welcome</h1>
+      <h2>Discover the story of Nefertiti Bust</h2>
+      <h3>1370 - 1330 BC</h3>
+    </div>
+ </div>
+  
+  <div class="background-video">
+    <video autoplay muted loop>
+      <source src="/Users/shirin/Desktop/DigitalHumanities/desert.mp4" type="video/mp4">
+    </video>
+  </div>
+  
+  <div class="container left">
+    <div class="content">
+      <h2>The find and excavation work</h2>
+      <p>The revealing of an ancient Treasure.</p>
+      <div class="content_image">
+                  </div>
+                  <button id="myBtn">Open Picture of the excavation team</button>
+
+<!-- The Modal -->
+<div id="myModal" class="modal">
+
+  <!-- Modal content -->
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <p> <h2>Excavation Team</h2>
+        The bust of Nefertiti was found on 6 December 1912 during an excavation at the Middle Egyptian site of Tell el-Amarna. 
+        The excavation campaign was led by the Egyptologist and architectural historian Ludwig Borchardt (1863–1938).
+        Ludwig Borchardt's career in Egyptology and his role in the discovery of the Bust of Nefertiti have left a lasting impact on the field of 
+        archaeology and continue to be subjects of interest and debate in discussions about cultural heritage and repatriation. 
+        Bildquelle: Der Spiegel</p>
+    <div>                
+      <img class="content_image" src="https://cdn.prod.www.spiegel.de/images/64bb07a7-0001-0004-0000-000000433052_w920_r0.6918320859095347_fpx44.97_fpy51.88.jpg" 
+                  alt="The Excavation Team" /></div>
+
+  </div>
+
+</div>
+    </div>
+    
+
+  </div>
+  <div class="container right">
+    <div class="content">
+      <h2>The most powerful egyptian queen</h2>
+      <p>Who was this iconic figure? </p>
+        <div class="content_video">
+                    </div>
+                    <button  onclick="openModal('myModal2', 'myBtn2')"  id="myBtn2">Learn more about Nerfetiti</button>
+
+ <!-- The Modal -->
+ <div id="myModal2" class="modal">
+
+  <!-- Modal content -->
+  <div class="modal-content">
+    <span class="close" >&times;</span>
+    <h2>Her Role</h2>
+      <p>She played a prominent role during her husband's reign, particularly in the religious and cultural changes associated with the Amarna Period.
+        <h3>History and Religion</h3>
+        Akhenaten and Nefertiti are known for their religious reforms, which involved the promotion of the sun god Aten to the position of supreme deity, leading to a shift away from traditional Egyptian polytheism. 
+        This religious change was highly controversial and disrupted established religious practices. 
+        Nefertiti is often associated with the artistic and stylistic changes of the Amarna Period. Her bust, known for its striking beauty, is an iconic example of the art from this time.
+        <h3>Mystery and Controversy</h3> 
+        Nefertiti's life after Akhenaten's death remains a subject of debate and mystery. Some theories suggest that she may have ruled briefly as a pharaoh, 
+        while others speculate about her disappearance from historical records. 
+        While Nefertiti is admired for her beauty and artistic representations, her historical significance has also generated controversy. 
+        Some historians view her and Akhenaten's religious reforms negatively, as they disrupted established Egyptian traditions and institutions. </p>
+    <div>                
+      <div class="videoWrapper">
+          <iframe width="560" height="315" src="https://youtu.be/bLWD3bVhSbM?si=czGcdCgcIt8coJf8" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+        </div>     
+  </div>
+</div> 
+</div>
+
+</div> 
+</div>
+    
+ <div class="container left">
+    <div class="content">
+      <h2>A model of the ancient bust</h2>
+      <p>A 3D model of a sculpture of the ancient Egyptian queen Nefertiti has been revealed to demonstrate the force of her attraction</p>
+      <div class="content_image">
+                  </div>
+                  <button  onclick="openModal('myModal3', 'myBtn3')"  id="myBtn3">Learn more about the Look</button>
+
+<!-- The Modal -->
+<div id="myModal3" class="modal">
+
+ <!-- Modal content -->
+ <div class="modal-content">
+    <span class="close" >&times;</span>
+    <h2>The look of this iconic sculpture</h2>
+    <p>The Bust of Nefertiti is celebrated not only for its historical significance but also for its artistic excellence.
+        Nefertiti's facial features are striking and finely detailed. She is depicted with a long, graceful neck, high cheekbones, 
+        and a slender, elegant nose. Her almond-shaped eyes are outlined with finely sculpted cosmetic lines.
+        The bust is made of limestone and plaster. The limestone core provides stability, while the plaster surface allowed for intricate carving and realistic detail. 
+        The smooth, polished surface of the bust enhances its lifelike appearance.
+        <h3>The Crown</h3>
+        Nefertiti is typically shown wearing an elaborate crown, known as the "Nefertiti cap crown" or the "blue crown." This crown consists of a tall, blue-colored headdress adorned with a sun disk and cobra emblem. 
+        The cobra was a symbol of royalty and protection in ancient Egypt.
+
+        The Bust of Nefertiti measures approximately 20.5 centimeters (8.1 inches) in height and is relatively small in scale, emphasizing the level of detail in its creation.
+    </p>
+    <div>                
+      <div class="videoWrapper">
+          <iframe width="560" height="315" src="https://youtu.be/7fLGtUj-Kys?si=9TWxfwLhIX2d7sIF" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+        </div>     
+  </div>
+</div> 
+</div>
+
+</div> 
+</div>
+
+  <div class="container right">
+    <div class="content">
+      <h2>"Nerfetiti was more than <br> just a pretty face"</h2>
+      <p>About the meaning and importance of this ancient treasure</p>
+      <div class="content_image">
+                  </div>
+                  <button  onclick="openModal('myModal4', 'myBtn4')"  id="myBtn4">Find out more about her Symbolic Power</button>
+
+<!-- The Modal -->
+<div id="myModal4" class="modal">
+
+ <!-- Modal content -->
+ <div class="modal-content">
+  <span class="close" >&times;</span>
+  <h2>A Woman with enormous Power in ancient Egypt</h2>
+  <p>Nefertiti was the Great Royal Wife of Akhenaten, and her depiction in the bust symbolizes the concept of royal femininity and power in ancient Egypt. She is often associated with the idea of an idealized queen, and the bust captures this symbolism.
+     The bust has become an iconic symbol of ancient Egyptian culture and artistry. It is frequently reproduced in various forms and has appeared in art, literature, and popular culture, further solidifying its status as a cultural icon.
+     Overall, the Bust of Nefertiti is important not only for its artistic beauty but also for its historical and cultural significance, making it one of the most renowned and cherished artifacts from ancient Egypt.</p>
+  <div>                
+    <div class="videoWrapper">
+        <iframe width="560" height="315" src="https://youtu.be/KVtZNo-Xg-c" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+      </div>     
+</div>
+</div> 
+</div>
+
+</div> 
+</div>
+
+  <div class="container left">
+    <div class="content">
+      <h2>Colonial looted art</h2>
+      <p>The underlying topic and the limits of restitution </p>
+      <div class="content_image">
+                  </div>
+                  <button  onclick="openModal('myModal5', 'myBtn5')"  id="myBtn5">Learn more about the debate</button>
+
+<!-- The Modal -->
+<div id="myModal5" class="modal">
+
+    <!-- Modal content -->
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2>To return or not to return</h2>
+      <p>The Bust of Nefertiti, housed in the Neues Museum in Berlin, Germany, has been at the center of discussions and debates related to colonial looted art and cultural heritage restitution. 
+        <h3>Colonial law</h3>
+        As there was a colonial law at that time, that says every find has to be shared between the country where it was found and the country where the archeologists are from, the appropriation was in theory legal. 
+        But it needs to be considered that the Europeans who dominated Egypt at the time as a colonial protectorate also ran the administration of its antiquities. Historically, the acquisition of the Nefertiti bust is highly problematic. 
+        Egypt was a de facto British protectorate from 1882. Nefertiti thus came to Germany under the conditions of European foreign rule; nobody asked the Egyptians.
+        The controversy surrounding the bust revolves around the circumstances of its discovery and the question of whether it was obtained through colonial-era looting or legitimate archaeological excavation.</p>
+  <div>                
+        <div class="videoWrapper">
+            <iframe width="560" height="315" src="https://youtu.be/KSdLEDdx27U?si=CMSnIdy-KfiTUj3t" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+          </div>     
+    </div>
+  </div> 
+  </div>
+  
+  </div> 
+  </div>
+  <div class="container right">
+    <div class="content">
+      <h2>Fighting the trade</h2>
+      <p>To better fight the trade of cultural property, the UNESCO Convention 1970 was created. </p>
+      <div class="content_image">
+                  </div>
+                  <button  onclick="openModal('myModal6', 'myBtn6')"  id="myBtn6">Get more information</button>
+
+<!-- The Modal -->
+<div id="myModal6" class="modal">
+
+  <!-- Modal content -->
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <p>The UNESCO Convention on the Means of Prohibiting and Preventing the Illicit Import, Export, and Transfer of Ownership of Cultural Property of 1970,
+        entered into force to better fight the trade of cultural property.
+       <h3>Defining the term</h3>
+       For the  Convention, the term "cultural property" means property that, on religious or secular grounds, is specifically designated by each State as being of
+       importance for archaeology, prehistory, history, literature, art, or science.
+      <h3>Requirements</h3>
+      So for example the object has to be documented as being part of the inventory of the institution or country that is requesting, 
+      which is often a common problem as many museums and other institutions lack documentation.
+      You want more Details? <a href="https://en.unesco.org/fighttrafficking/1970">Go to UNESCO Wesbite</a>
+     </p> 
+  </div>
+
+</div>
+    </div>
+    
+
+  </div>
+
+
+  <div class="container left">
+    <div class="content">
+        <h2>Concerns and restitution challenges</h2>
+        <p>A matter of Ownership, ethical and legal Questions </p>
+      <div class="content_image">
+                  </div>
+                  <button  onclick="openModal('myModal7', 'myBtn7')"  id="myBtn7"></button>
+
+<!-- The Modal -->
+<div id="myModal7" class="modal">
+
+    <!-- Modal content -->
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <p>The debate over the ownership of the bust raises important legal and ethical questions regarding the acquisition of cultural artifacts during the colonial period. 
+        Critics argue that colonial-era practices often involved the removal of valuable artifacts from their countries of origin without adequate consent, 
+        and that these artifacts should be returned to their rightful owners.
+        <h3>Restitution</h3>
+        Egypt has long contended that the bust was taken out of the country without proper authorization and consent, characterizing it as a colonial-era loot. 
+        This has led to ongoing demands for the repatriation of the artifact to Egypt.
+        Calls for the restitution of the Bust of Nefertiti have been made by various parties, including the Egyptian government and cultural heritage advocates. 
+        Egypt argues that the bust is part of its national heritage and should be returned to its home country.
+       <h3>Challenges</h3>
+       The issue of restitution is complex, as it involves navigating international laws, agreements, and the policies of individual museums and governments. 
+       Proponents of restitution argue that museums should actively work to return cultural artifacts obtained through colonial-era practices to their countries of origin as a way 
+       to address historical injustices.</p>
+  <div>                
+    
+    </div>
+  </div> 
+  </div>
+  
+  </div> 
+  </div>
+</div>
+<script>
+
+
+// Get the welcome image element
+var welcomeContainer = document.getElementById("welcome-container");
+
+// Show the welcome image on page load
+window.addEventListener("load", function() {
+  // Set a timeout to hide the welcome image after 3 seconds
+  setTimeout(function() {
+    welcomeContainer.style.display = "none";
+  }, 3000);
+});
+
+// Adjust the image size for desktop screens
+function adjustImageSize() {
+  var windowWidth = window.innerWidth || document.documentElement.clientWidth;
+  if (windowWidth >= 1920) {
+    welcomeContainer.style.maxWidth = "100%"; // Adjust the maximum width for desktop screens
+  } else {
+    welcomeContainer.style.maxWidth = "100%"; // Reset the maximum width for smaller screens
+  }
+}
+
+// Call the adjustImageSize function on page load and window resize
+window.addEventListener("load", adjustImageSize);
+window.addEventListener("resize", adjustImageSize);
+
+
+// Get the modal elements
+var modal1 = document.getElementById("myModal");
+var modal2 = document.getElementById("myModal2");
+var modal3 = document.getElementById("myModal3");
+var modal4 = document.getElementById("myModal4");
+var modal5 = document.getElementById("myModal5");
+var modal6 = document.getElementById("myModal6");
+var modal7 = document.getElementById("myModal7");
+
+// Get the buttons that open the modals
+var btn1 = document.getElementById("myBtn");
+var btn2 = document.getElementById("myBtn2");
+var btn3 = document.getElementById("myBtn3");
+var btn4 = document.getElementById("myBtn4");
+var btn5 = document.getElementById("myBtn5");
+var btn6 = document.getElementById("myBtn6");
+var btn7 = document.getElementById("myBtn7");
+
+
+// Get the close buttons
+var close1 = modal1.getElementsByClassName("close")[0];
+var close2 = modal2.getElementsByClassName("close")[0];
+var close3 = modal3.getElementsByClassName("close")[0];
+var close4 = modal4.getElementsByClassName("close")[0];
+var close5 = modal5.getElementsByClassName("close")[0];
+var close6 = modal6.getElementsByClassName("close")[0];
+var close7 = modal7.getElementsByClassName("close")[0];
+
+
+// Function to open the modal
+function openModal(modal) {
+  modal.style.display = "block";
+}
+
+// Function to close the modal
+function closeModal(modal) {
+  modal.style.display = "none";
+}
+
+// Attach event listener to the first button
+btn1.addEventListener("click", function() {
+  openModal(modal1);
+});
+
+// Attach event listener to the second button
+btn2.addEventListener("click", function() {
+  openModal(modal2);
+});
+
+// Attach event listener to the second button
+btn3.addEventListener("click", function() {
+  openModal(modal3);
+});
+
+// Attach event listener to the second button
+btn4.addEventListener("click", function() {
+  openModal(modal4);
+});
+
+// Attach event listener to the second button
+btn5.addEventListener("click", function() {
+  openModal(modal5);
+});
+
+// Attach event listener to the second button
+btn6.addEventListener("click", function() {
+  openModal(modal6);
+});
+
+// Attach event listener to the second button
+btn7.addEventListener("click", function() {
+  openModal(modal7);
+});
+
+// Attach event listener to the first close button
+close1.addEventListener("click", function() {
+  closeModal(modal1);
+});
+
+// Attach event listener to the second close button
+close2.addEventListener("click", function() {
+  closeModal(modal2);
+});
+
+// Attach event listener to the second close button
+close3.addEventListener("click", function() {
+  closeModal(modal3);
+});
+
+// Attach event listener to the second close button
+close4.addEventListener("click", function() {
+  closeModal(modal4);
+});
+
+// Attach event listener to the second close button
+close5.addEventListener("click", function() {
+  closeModal(modal5);
+});
+
+// Attach event listener to the second close button
+close6.addEventListener("click", function() {
+  closeModal(modal6);
+});
+
+// Attach event listener to the second close button
+close7.addEventListener("click", function() {
+  closeModal(modal7);
+});
+
+
+// Close modals when clicking outside the content
+window.addEventListener("click", function(event) {
+  if (event.target === modal1) {
+    closeModal(modal1);
+  } else if (event.target === modal2) {
+    closeModal(modal2);
+  } else if (event.target === modal3) {
+    closeModal(modal3);
+  } else if (event.target === modal4) {
+    closeModal(modal4);
+  } else if (event.target === modal5) {
+    closeModal(modal5);
+  } else if (event.target === modal6) {
+    closeModal(modal6);
+  } else if (event.target === modal7) {
+    closeModal(modal7);
+  }
+});
+
+  </script>
+  
+</body>
+</html>
